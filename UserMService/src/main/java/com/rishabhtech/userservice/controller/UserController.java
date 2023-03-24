@@ -43,11 +43,13 @@ public class UserController {
 		return new ResponseEntity<User>(savedUser,HttpStatus.CREATED);
 	}
 	
+	//single user id
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<User> getUserById(@PathVariable(name="id") String userId)
 	{
 		User userById = this.userService.getUserById(userId);
+		
 		return new ResponseEntity<User>(userById,HttpStatus.OK);
 	}
 	
