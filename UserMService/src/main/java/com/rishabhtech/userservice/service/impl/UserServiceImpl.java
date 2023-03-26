@@ -15,10 +15,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.netflix.discovery.converters.Auto;
 import com.rishabhtech.userservice.entity.Hotel;
 import com.rishabhtech.userservice.entity.Rating;
 import com.rishabhtech.userservice.entity.User;
 import com.rishabhtech.userservice.exception.ResourceNotFoundException;
+import com.rishabhtech.userservice.external.services.HotelService;
 import com.rishabhtech.userservice.repo.UserRepo;
 import com.rishabhtech.userservice.service.UserService;
 
@@ -31,6 +33,8 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private RestTemplate restTemplate;
 	
+	@Autowired
+	private HotelService hotelService;
 	
 	private Logger logger=LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -61,11 +65,12 @@ public class UserServiceImpl implements UserService {
 		logger.info("{}",ratingsOfUser);
 		ratingsOfUser.stream().map(rating -> {
 			//http://localhost:8082/ratings/users/8ae64132-dbbb-432e-8cf0-33c61f93fd1b
-			ResponseEntity<Hotel> hotelResponseEntity = this.restTemplate.getForEntity("http://HOTEL-SERVICE/hotels/"+rating.getHotelId(), Hotel.class);
-			Hotel hotel = hotelResponseEntity.getBody();
-			HttpStatusCode statusCode = hotelResponseEntity.getStatusCode();
+//			ResponseEntity<Hotel> hotelResponseEntity = this.restTemplate.getForEntity("http://HOTEL-SERVICE/hotels/"+rating.getHotelId(), Hotel.class);
+			Hotel hotel = this.hotelService.getHotel(rating.getHotelId());
+			
+//			HttpStatusCode statusCode = hotelResponseEntity.getStatusCode();
 			logger.info("{}",hotel);
-			logger.info("{}",statusCode);
+//			logger.info("{}",statusCode);
 			rating.setHotel(hotel);
 			return rating;
 		}).collect(Collectors.toList());
