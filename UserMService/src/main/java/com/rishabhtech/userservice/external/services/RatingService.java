@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 import com.rishabhtech.userservice.entity.Rating;
 
-@FeignClient
+@FeignClient(name="RATING-SERVICE")
 public interface RatingService {
 
 	//get
