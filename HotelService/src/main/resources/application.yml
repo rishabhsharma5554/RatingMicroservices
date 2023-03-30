@@ -14,14 +14,17 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  config:
+    import: configserver:http://localhost:8085
     
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    fetch-registry: true
-    register-with-eureka: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka
+#comming from config server
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#  client:
+#    fetch-registry: true
+#    register-with-eureka: true
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka
       
   
