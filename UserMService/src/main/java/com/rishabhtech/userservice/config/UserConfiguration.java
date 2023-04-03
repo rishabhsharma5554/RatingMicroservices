@@ -1,5 +1,6 @@
 package com.rishabhtech.userservice.config;
 
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
@@ -15,4 +16,6 @@ public class UserConfiguration {
 	{
 		return new RestTemplate();
 	}
+	
+	
 }
