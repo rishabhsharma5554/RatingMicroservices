@@ -24,6 +24,7 @@ import com.rishabhtech.userservice.external.services.HotelService;
 import com.rishabhtech.userservice.repo.UserRepo;
 import com.rishabhtech.userservice.service.UserService;
 
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -35,6 +36,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private HotelService hotelService;
+	
 	
 	
 	private Logger logger=LoggerFactory.getLogger(UserServiceImpl.class);

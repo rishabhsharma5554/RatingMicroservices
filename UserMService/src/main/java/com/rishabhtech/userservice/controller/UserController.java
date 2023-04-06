@@ -24,6 +24,9 @@ import com.rishabhtech.userservice.service.UserService;
 import com.rishabhtech.userservice.service.impl.UserServiceImpl;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
+import java.util.concurrent.atomic.AtomicInteger;
+
 
 @RestController
 @RequestMapping("/users")
@@ -51,28 +54,30 @@ public class UserController {
 	}
 	
 	//single user id
-	
+	private AtomicInteger retryCount = new AtomicInteger(0);
+
 	@GetMapping("/{id}")
-	@CircuitBreaker(name="ratingHotelBreaker",fallbackMethod = "ratingHotelFallbackMethod")
-	public ResponseEntity<User> getUserById(@PathVariable(name="id") String userId)
-	{
-		logger.info("Get Single User Handler: UserController");
-		User userById = this.userService.getUserById(userId);
-		return new ResponseEntity<User>(userById,HttpStatus.OK);
+//	@CircuitBreaker(name="ratingHotelBreaker", fallbackMethod="ratingHotelFallbackMethod")
+	@Retry(name="ratingHotelRetry", fallbackMethod="ratingHotelFallbackMethod")
+	public ResponseEntity<User> getUserById(@PathVariable(name="id") String userId) {
+	    logger.info("Get Single User Handler: UserController");
+	    logger.info("Retry Count : {}", retryCount.getAndIncrement());
+	    User userById = this.userService.getUserById(userId);
+	    return new ResponseEntity<>(userById, HttpStatus.OK);
 	}
-	
-	//creating fallback method  for circuit Breaker 
-	public ResponseEntity<User> ratingHotelFallbackMethod(String userId,Exception ex)
-	{
-		logger.warn("Fallback is executed because service is down : "+ex.getMessage());
-		User user = User.builder()
-				.email("dummy@gmail.com")
-				.name("Dummy")
-				.about("This user is created due to some service is down.")
-				.userId("xxxx")
-				.build();
-		return new ResponseEntity<User>(user,HttpStatus.OK);
+
+	// Fallback method for circuit breaker and retry
+	public ResponseEntity<User> ratingHotelFallbackMethod(String userId, Exception ex) {
+	    logger.warn("Fallback is executed because the service is down: " + ex.getMessage());
+	    User user = User.builder()
+	            .email("dummy@gmail.com")
+	            .name("Dummy")
+	            .about("This user is created due to some service being down.")
+	            .userId("xxxx")
+	            .build();
+	    return new ResponseEntity<>(user, HttpStatus.OK);
 	}
+
 	
 	
 	@DeleteMapping("/{id}")
